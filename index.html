@@ -3,111 +3,172 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>3D Campus Navigator - University of Ruhuna</title>
+    <title>Faculty of Medicine - Campus Map</title>
 
     <!-- Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
       rel="stylesheet"
     />
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 
-    <!-- Mapbox GL Directions -->
+    <!-- Mapbox Directions -->
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
     <link
       rel="stylesheet"
       href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css"
-      type="text/css"
     />
 
-    <!-- Mapbox GL Geocoder -->
+    <!-- Mapbox Geocoder -->
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
     <link
       rel="stylesheet"
       href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
-      type="text/css"
     />
 
-    <!-- Turf.js for geospatial operations -->
+    <!-- Turf.js -->
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
 
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Map Container -->
-    <div id="map"></div>
+    <div id="app-container">
+      <!-- Sidebar -->
+      <div id="sidebar">
+        <div class="sidebar-header">
+          <h1>🏥 Faculty of Medicine</h1>
+          <p>University of Ruhuna</p>
+        </div>
 
-    <!-- Control Panel -->
-    <div class="control-panel">
-      <div class="panel-header">
-        <h2>Campus Navigator</h2>
-        <button id="toggle-3d" class="btn-3d">Toggle 3D</button>
+        <!-- Search -->
+        <div class="sidebar-section">
+          <h3>🔍 Search Location</h3>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search buildings, departments..."
+          />
+          <div id="search-results"></div>
+        </div>
+
+        <!-- Building Categories -->
+        <div class="sidebar-section">
+          <h3>📍 Quick Access</h3>
+          <div class="category-buttons">
+            <button class="category-btn" data-category="admin">
+              Admin Block
+            </button>
+            <button class="category-btn" data-category="department">
+              Department Block
+            </button>
+            <button class="category-btn" data-category="anatomy">
+              Anatomy Block
+            </button>
+            <button class="category-btn" data-category="clinical">
+              Clinical Block
+            </button>
+            <button class="category-btn" data-category="hostel">Hostels</button>
+            <button class="category-btn" data-category="all">Show All</button>
+          </div>
+        </div>
+
+        <!-- Directions -->
+        <div class="sidebar-section">
+          <h3>🧭 Get Directions</h3>
+          <select id="start-location" class="location-select">
+            <option value="">Select Starting Point</option>
+          </select>
+          <select id="end-location" class="location-select">
+            <option value="">Select Destination</option>
+          </select>
+          <div class="transport-modes">
+            <button class="mode-btn active" data-mode="walking">🚶 Walk</button>
+            <button class="mode-btn" data-mode="cycling">🚴 Cycle</button>
+            <button class="mode-btn" data-mode="driving">🚗 Drive</button>
+          </div>
+          <button id="get-directions-btn" class="primary-btn">
+            Get Directions
+          </button>
+          <button id="clear-directions-btn" class="secondary-btn">
+            Clear Route
+          </button>
+          <div id="route-info" class="route-info hidden"></div>
+        </div>
+
+        <!-- GPS Tracking -->
+        <div class="sidebar-section">
+          <h3>📡 Live Tracking</h3>
+          <button id="track-location-btn" class="primary-btn">
+            📍 Enable GPS Tracking
+          </button>
+          <div id="tracking-info" class="tracking-info hidden"></div>
+        </div>
+
+        <!-- Building List -->
+        <div class="sidebar-section">
+          <h3>🏛️ All Locations</h3>
+          <div id="building-list" class="building-list"></div>
+        </div>
       </div>
 
-      <!-- Search Box -->
-      <div id="search-container"></div>
+      <!-- Map Container -->
+      <div id="map-container">
+        <div id="map"></div>
 
-      <!-- Quick Access Locations -->
-      <div class="quick-locations">
-        <h3>Quick Access</h3>
-        <div id="location-buttons"></div>
-      </div>
+        <!-- Floating Controls -->
+        <div class="floating-controls">
+          <button id="toggle-3d-btn" class="control-btn">🏢 3D View</button>
+          <button id="center-campus-btn" class="control-btn">🎯 Center</button>
+          <button id="toggle-labels-btn" class="control-btn">🏷️ Labels</button>
+          <button id="share-location-btn" class="control-btn">📤 Share</button>
+        </div>
 
-      <!-- Current Location Info -->
-      <div class="location-info">
-        <h3>Current Status</h3>
-        <div id="current-location">Getting location...</div>
-        <div id="travel-info"></div>
-      </div>
+        <!-- Legend -->
+        <div class="map-legend">
+          <h4>Legend</h4>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #e74c3c"></span>
+            <span>Admin Block</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #3498db"></span>
+            <span>Department Block</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #2ecc71"></span>
+            <span>Anatomy Block</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #f39c12"></span>
+            <span>Clinical Block</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #9b59b6"></span>
+            <span>Hostels</span>
+          </div>
+        </div>
 
-      <!-- Feature Toggles -->
-      <div class="feature-toggles">
-        <label>
-          <input type="checkbox" id="toggle-tracking" checked />
-          <span>Live Tracking</span>
-        </label>
-        <label>
-          <input type="checkbox" id="toggle-buildings" checked />
-          <span>Show Buildings</span>
-        </label>
-        <label>
-          <input type="checkbox" id="toggle-accessibility" />
-          <span>Accessibility Routes</span>
-        </label>
-        <label>
-          <input type="checkbox" id="toggle-parking" />
-          <span>Show Parking</span>
-        </label>
-      </div>
-
-      <!-- Share Location -->
-      <div class="share-section">
-        <button id="share-location" class="btn-primary">
-          Share My Location
-        </button>
-        <div id="share-code"></div>
+        <div id="loading-indicator" class="hidden">
+          <div class="spinner"></div>
+          <p>Loading...</p>
+        </div>
       </div>
     </div>
 
-    <!-- Building Info Modal -->
-    <div id="building-modal" class="modal">
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal hidden">
       <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2 id="building-name"></h2>
-        <div id="building-details"></div>
-        <button id="navigate-to-building" class="btn-primary">
-          Navigate Here
-        </button>
+        <span class="close-modal">&times;</span>
+        <h2>📤 Share Location</h2>
+        <div class="share-options">
+          <input type="text" id="share-link" readonly />
+          <button id="copy-link-btn" class="primary-btn">Copy Link</button>
+        </div>
       </div>
     </div>
 
-    <!-- Loading Indicator -->
-    <div id="loading" class="loading-indicator">
-      <div class="spinner"></div>
-      <p>Loading map data...</p>
-    </div>
-
-    <script src="campus-map.js"></script>
+    <script src="campus-data.js"></script>
+    <script src="map-config.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
