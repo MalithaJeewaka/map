@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Campus Navigator - University of Ruhuna</title>
+
+    <!-- Mapbox GL JS -->
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+    <!-- Mapbox GL Directions -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css"
+      type="text/css"
+    />
+
+    <!-- Mapbox GL Geocoder -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+      type="text/css"
+    />
+
+    <!-- Turf.js for geospatial operations -->
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+      <div class="panel-header">
+        <h2>Campus Navigator</h2>
+        <button id="toggle-3d" class="btn-3d">Toggle 3D</button>
+      </div>
+
+      <!-- Search Box -->
+      <div id="search-container"></div>
+
+      <!-- Quick Access Locations -->
+      <div class="quick-locations">
+        <h3>Quick Access</h3>
+        <div id="location-buttons"></div>
+      </div>
+
+      <!-- Current Location Info -->
+      <div class="location-info">
+        <h3>Current Status</h3>
+        <div id="current-location">Getting location...</div>
+        <div id="travel-info"></div>
+      </div>
+
+      <!-- Feature Toggles -->
+      <div class="feature-toggles">
+        <label>
+          <input type="checkbox" id="toggle-tracking" checked />
+          <span>Live Tracking</span>
+        </label>
+        <label>
+          <input type="checkbox" id="toggle-buildings" checked />
+          <span>Show Buildings</span>
+        </label>
+        <label>
+          <input type="checkbox" id="toggle-accessibility" />
+          <span>Accessibility Routes</span>
+        </label>
+        <label>
+          <input type="checkbox" id="toggle-parking" />
+          <span>Show Parking</span>
+        </label>
+      </div>
+
+      <!-- Share Location -->
+      <div class="share-section">
+        <button id="share-location" class="btn-primary">
+          Share My Location
+        </button>
+        <div id="share-code"></div>
+      </div>
+    </div>
+
+    <!-- Building Info Modal -->
+    <div id="building-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="building-name"></h2>
+        <div id="building-details"></div>
+        <button id="navigate-to-building" class="btn-primary">
+          Navigate Here
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading-indicator">
+      <div class="spinner"></div>
+      <p>Loading map data...</p>
+    </div>
+
+    <script src="campus-map.js"></script>
+  </body>
+</html>
